@@ -99,9 +99,63 @@ Checked the specific user usms-dev-01 to confirm its ARN and other details(tag).
 
 Has 2 tag attached to the user usms-dev-01. This is important because tags can be used for identification, organization, and access control.
 
+**Add users to groups**
+
+Added usms-admin-01 to usms-admins, usms-dev-01 to usms-developers, and usms-audit-01 to usms-auditors.
+
+![alt text](../../screenshots/20.png)
+
+Then verified that the users are added to the groups.
+
+![alt text](../../screenshots/21.1.png)
+
+**Explore and attach an AWS managed policy**
+
+These are the available AWS managed policies in the Floci environment.
+
+![alt text](../../screenshots/21.png)
+
+There are 10 policies available in the Floci environment.
+
+Attached the AWS managed ReadOnlyAccess policy to usms-auditors, giving the group read-only access to AWS resources.
+
+![alt text](../../screenshots/21.1.png)
+
+![alt text](../../screenshots/21.2.png)
+
+Then verified that the policy is attached to the group usms-auditors.
+
+![alt text](../../screenshots/21.3.png)
+
+**Customer managed policy**
+
+First, I created a policy file named USMSDeveloperBase.json and verified its content using python.
+
+![alt text](../../screenshots/22.png)
+
+Created USMSDeveloperBase with aws iam create-policy, then attached it to usms-developers.
+
+![alt text](../../screenshots/22.1.png)
+
+![alt text](../../screenshots/22.2.png)
+
+Verified that the policy is attached to the group usms-developers.
+
+![alt text](../../screenshots/22.3.png)
+
+Wrote USMSStudentDataReadWrite, a customer managed policy that allows read and write access to student data stored in S3 buckets. This policy was attached to the usms-developers group.
+
+![alt text](../../screenshots/23.png)
+
+verified that the policy is attached to the group usms-developers.
+
+![alt text](../../screenshots/23.1.png)
+
 
 
 ## Reflection
+
+
 
 ## Conclusion
 
