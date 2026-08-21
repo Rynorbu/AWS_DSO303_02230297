@@ -151,7 +151,25 @@ verified that the policy is attached to the group usms-developers.
 
 ![alt text](../../screenshots/23.1.png)
 
+**S3 policy**
+Made the USMSStudentDataReadWrite policy for S3 access. Separate buckets and object ARNs were used because they are different to specify bucket-level and object-level operations.
 
+![alt text](../../screenshots/23.png)
+
+**Inline policy** 
+We added the USMSSelfManageCredentials inline policy directly to usms-dev-01. This was done on purpose, and is a clear exception from permissions being assigned via groups.
+
+**Inspect policies**
+Examined permissions assigned to users and groups using list-attached-user-policies, list-attached-group-policies and list-user-policies.
+
+**Policy versions**
+Listed the various versions of a customer managed policy with the AWS IAM service list-policy-versions.
+
+**EC2 role**
+Created usms-ec2-app-role using trust-ec2.json. The trust policy enables the EC2 service to assume the role. Used the get-role command to verify the role.
+
+**Lambda role**
+Created usms-lambda-exec-role based on the trust-lambda.json file, which enables Lambda to assume the role.
 
 ## Reflection
 
