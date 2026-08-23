@@ -148,6 +148,7 @@ Verified that the policy is attached to the group usms-developers.
 ![alt text](../../screenshots/22.3.png)
 
 **S3 policy**
+
 Made the USMSStudentDataReadWrite policy for S3 access. Separate buckets and object ARNs were used because they are different to specify bucket-level and object-level operations.
 
 ![alt text](../../screenshots/23.png)
@@ -157,22 +158,27 @@ Then verified it.
 ![alt text](../../screenshots/23.1.png)
 
 **Inline policy** 
+
 We added the USMSSelfManageCredentials inline policy directly to usms-dev-01. This was done on purpose, and is a clear exception from permissions being assigned via groups.
 
 **Inspect policies**
+
 Examined permissions assigned to users and groups using list-attached-user-policies,list-attached-group-policies and list-user-policies.
 
 ![alt text](../../screenshots/25.1.png)
 
 **Policy versions**
+
 Listed the various versions of a customer managed policy with the AWS IAM service list-policy-versions.
 
 ![alt text](../../screenshots/27.1.png)
 
 **EC2 role**
+
 Created usms-ec2-app-role using trust-ec2.json. The trust policy enables the EC2 service to assume the role. Used the get-role command to verify the role.
 
 **Lambda role**
+
 Created usms-lambda-exec-role based on the trust-lambda.json file, which enables Lambda to assume the role.
 
 
@@ -234,9 +240,11 @@ Another observation I made was seperating the policies from trust policies. This
 
 ## Reflection
 
-So by doing this practical lab, I learned the importance of IAM in managing the AWS resources and how they are created. AWS follows the principle of least privelege and this lab taught me how to implement this principle by creating groups and assigning permissions based on roles.
+Before doing this lab, I thought that the IAM is just about creating users and groups, but after doing this lab I learned it is mainly about the full-access control system. It builds users, groups, roles and policies and the roles need both the trust policy and the permissions policy to be in place.
 
-I have done this lab twice, first time I did only some time and continued doing the next day, but then the data was lost because I did not set the storage mode properly. So I had to start over again and this time I made sure to set the storage mode to hybrid storage, which allowed me to persist the data even after restarting the container.
+The biggest challenge I have faced in this lab is losing my work, The first I did the lab I didn't have the idea the persistent storage. I ahve done the lab till step 19 and continued in the next day. But when I continued the lab, I did floci start and all the data was lost. So, I had done agiain fron the start. 
+
+So, by doing this mistake, I have learned that the floci storage mode is made to hybrid storage, which means that the data is stored both in the container and on the host machine.
 
 ## Conclusion
 

@@ -1,0 +1,29 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ReadSourceObjects",
+      "Effect": "Allow",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::usms-student-data/*",
+      "Condition": { "StringEquals": { "aws:RequestedRegion": "us-east-1" } }
+    },
+    {
+      "Sid": "WriteAndVerifyArchive",
+      "Effect": "Allow",
+      "Action": ["s3:PutObject", "s3:ListBucket"],
+      "Resource": [
+        "arn:aws:s3:::usms-archive",
+        "arn:aws:s3:::usms-archive/*"
+      ],
+      "Condition": { "StringEquals": { "aws:RequestedRegion": "us-east-1" } }
+    },
+    {
+      "Sid": "WriteCompletionLog",
+      "Effect": "Allow",
+      "Action": ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"],
+      "Resource": "arn:aws:logs:us-east-1:000000000000:*",
+      "Condition": { "StringEquals": { "aws:RequestedRegion": "us-east-1" } }
+    }
+  ]
+}
