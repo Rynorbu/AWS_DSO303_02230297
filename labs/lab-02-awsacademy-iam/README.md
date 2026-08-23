@@ -28,6 +28,7 @@ This lab builds a VPC with two Availability zones, each zone has one public and 
 
 **Step 1: Create a VPC**
 
+First, I have created a VPC named lab-vpc and added a public and private subnet in the first Availability Zone. All the subnets were associated with the default route tables and an Internet Gateway was attached to the VPC.
 
 **Step 2: Added subnets in a second Availability Zone**
  
