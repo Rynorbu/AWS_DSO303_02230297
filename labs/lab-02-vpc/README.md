@@ -305,7 +305,7 @@ Most result matches the results that were expected. A few errors were encountere
 
 ### Reflection
 
-Before doing this practical, I already had a basic understanding of what a VPC is and how it works from the AWS Academy labs. However, I had not worked with AWS using the CLI. Through this practical, I learned how to create a VPC with public and private subnets, set up an Internet Gateway, and configure security group and network ACL rules in a more hands-on way. 
+Before doing this practical, I already had a basic understanding of what a VPC is and how it works from the AWS Academy labs. However, I had not worked with creating VPC resources in AWS using the CLI. Through this practical, I learned how to create a VPC with public and private subnets, set up an Internet Gateway, and configure security group and network ACL rules in a more hands-on way. 
 
 I also learned how to use the AWS CLI to create and manage resources, which is a valuable skill for automating tasks and managing infrastructure as code.
 
