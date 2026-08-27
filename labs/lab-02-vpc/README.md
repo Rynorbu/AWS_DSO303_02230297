@@ -2,11 +2,12 @@
 
 ### AIM / OBJECTIVE
 
-The aim of this lab is to build a VPC using AWS CLI, with public and private subnets, an internet gateway, a NAT gateway and security groups. At the end it checks that everything is configured correctly and stay saved after a restart.
-
+The aim of this lab is to build a VPC using AWS CLI, with public and private subnets, an internet gateway, a NAT gateway and security groups.
 ### Introduction
 
-A Virtual Private Cloud (VPC) is a virtual network inside the AWS where we 
+A Virtual Private Cloud (VPC) is a virtual network inside the AWS where we can control the IP addresses, subnets, and traffic rules. It's main purpose is to provide a secure and isolated environment for running applications and services in the cloud. 
+
+VPC is important because almost all AWS services like EC2 and RDS, depends on it to stay secure and connected properly. It is commonly used to separate a public web server from a private database and to control how traffic flows within a system.
 
 ### Use Case
 
@@ -19,6 +20,9 @@ In this practical, VPC is used to build the network foundation for the USMS appl
 
 ### System Architecture / Design
 
+The VPC is designed with two Availability Zones, with a public subnet holding the NAT gateway and application security group, and a private subnet holding the database security group and network ACL. Route  table on the right control traffic flow, with the public subnet routing to the internet gateway and the private subnet routing to the NAT gateway and the S3 endpoint.
+
+![alt text](assets/arch.png)
 
 ### Implementation Procedure
 
@@ -295,10 +299,16 @@ Wrote an script to read the environment variables from configs/lab-02.env and ve
 
 ### Analysis and Discussion
 
+This lab achieved the goal of creating a VPC with a public subnet and a private subnet, correct routing so only the public subnet can be reached from the internet, a NAT gateway giving the private subnet outbound-only access, two security groups controlling traffic between the web and database tiers, a network ACL as a second layer of protection on the private subnet, and an S3 endpoint so traffic to S3 does not need to leave the AWS network.
 
+Most result matches the results that were expected. A few errors were encountered, after restarting floci, the VPC could not be found by its tag, even though it still existed. The actual cause was that the VPC's Name tag had never been applied correctly when it was created.
 
 ### Reflection
 
+Before doing this practical, I already had a basic understanding of what a VPC is and how it works from the AWS Academy labs. However, I had not worked with AWS using the CLI. Through this practical, I learned how to create a VPC with public and private subnets, set up an Internet Gateway, and configure security group and network ACL rules in a more hands-on way. 
+
+I also learned how to use the AWS CLI to create and manage resources, which is a valuable skill for automating tasks and managing infrastructure as code.
 
 ### Conclusion
 
+The practical demonstrated how to create a VPC with public and private subnets, an internet gateway, a NAT gateway, security groups, and a network ACL. It also showed how to verify the configuration and ensure that it persists across container restarts. The lab provided hands-on experience with AWS networking concepts and reinforced the importance of proper tagging and resource management. It helped me to develop skills in writing AWS CLI commands with filters and queries and troubleshooting broken configuration files.
