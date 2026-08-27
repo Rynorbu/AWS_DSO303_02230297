@@ -4,7 +4,7 @@
     "FromPort": 5432,
     "ToPort": 5432,
     "UserIdGroupPairs": [
-      { "GroupId": "sg-ae9ad9330a620147c", "Description": "PostgreSQL from the USMS application tier" }
+      { "GroupId": "$USMS_APP_SG", "Description": "PostgreSQL from the USMS application tier" }
     ]
   }
 ]

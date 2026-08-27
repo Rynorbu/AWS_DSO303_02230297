@@ -295,7 +295,9 @@ Every shell variable you have created dies when you close this terminal. This st
 
 ### Verification
 
-Wrote an script to read the environment variables from configs/lab-02.env and verify that they are set correctly.
+Wrote an script to read the environment variables from configs/lab-02.env and verify that they are set correctly. All test cases passed, confirming that the environment variables were set correctly.
+
+![alt text](assets/ver.png)
 
 ### Analysis and Discussion
 
