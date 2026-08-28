@@ -305,6 +305,49 @@ This lab achieved the goal of creating a VPC with a public subnet and a private 
 
 Most result matches the results that were expected. A few errors were encountered, after restarting floci, the VPC could not be found by its tag, even though it still existed. The actual cause was that the VPC's Name tag had never been applied correctly when it was created.
 
+### AWS ACADAMY 
+
+So, the VPC, subnets, route tables, internet gateway, security groups are all created in the AWS Academy account. Using the Lab 2 environmet of creating the VPC and its associated resources, I was able to gain hands-on experience with AWS networking concepts and reinforce my understanding of VPCs, subnets, route tables, security groups, and network ACLs.
+
+**Implementation and evidence:**
+
+Fist, I created a VPC with CIDR 10.0.0/16 and tagged it with Name=usms-vpc.
+
+![alt text](assets/aws1.png)
+
+![alt text](assets/asw2.png)
+
+VPC created successfully.
+
+The internet gateway was by default created when creating the vpc and is attached to the VPC.
+
+![alt text](assets/aws3.png)
+
+Then I have created four subnets, two public and two private, in different availability zones. The public subnets have auto-assign public IPv4 enabled.
+
+![alt text](assets/aws5.png)
+
+![alt text](assets/aws6.png)
+
+![alt text](assets/aws7.png)
+
+![alt text](assets/aws8.png)
+
+![alt text](assets/aws9.png)
+
+All the subnets were created successfully.
+
+Then I have created a route table for the public subnets and added a default route to the internet gateway. The public subnets were associated with this route table.
+
+![alt text](assets/aws10.png)
+
+![alt text](assets/aws11.png)
+
+Then created a route table for the private subnets and added a default route to the NAT gateway. The private subnets were associated with this route table.
+
+![alt text](assets/aws12.png)
+
+
 ### Reflection
 
 Before doing this practical, I already had a basic understanding of what a VPC is and how it works from the AWS Academy labs. However, I had not worked with creating VPC resources in AWS using the CLI. Through this practical, I learned how to create a VPC with public and private subnets, set up an Internet Gateway, and configure security group and network ACL rules in a more hands-on way. 
