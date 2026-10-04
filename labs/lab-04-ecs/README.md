@@ -91,14 +91,20 @@
 
 ### Step 12 - Write configs/lab-04.env
 
+![alt text](assets/12.png)
+
+![alt text](assets/12.1.png)
 
 ### Step 13 - Commit
 
 #### Command - part 1, look before you add
 
+![alt text](assets/13.png)
 
 #### Command - part 2, commit
 
+![alt text](assets/13.1.png)
 
 ### Verification
 
+![alt text](assets/verification.png)
