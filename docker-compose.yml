@@ -56,6 +56,9 @@ services:
       FLOCI_HOSTNAME: floci
       FLOCI_SERVICES_DOCKER_NETWORK: floci-course_default
 
+      # Enable Application Auto Scaling for Lab 04+
+      FLOCI_ENABLE_APPLICATION_AUTOSCALING: "true"
+
       # --- Cap the sidecar port ranges -----------------------------------
       # Floci's defaults are 100 ports each; ~600 published ports makes Docker
       # Desktop very slow to start. These caps keep the commented `ports:`
