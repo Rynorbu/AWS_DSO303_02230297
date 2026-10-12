@@ -256,33 +256,26 @@ All 6 failures come from **one cause**: the Floci problem in Step 10, where the 
 
 ### 7.1 What was achieved
 
-- An internet-facing ALB `usms-enrolment-alb` across **two Availability Zones**, with its own security group.
-- A target group with `--target-type ip`, a deliberate health check and a 30-second deregistration delay.
-- A listener on HTTP:80 with a default forward action and one rule at priority 10.
-- The **security cutover**: the enrolment tasks can now only be reached through the load balancer.
-- All of it **survived a restart**, and the important values were saved in `configs/lab-05.env` for Lab 06.
+I put the enrolment service behind an internet-facing ALB across two Availability Zones. I created a target group (`ip` type, health check on `/`), a listener on port 80 and a rule for `/alb-health`. After the cutover, **only the load balancer can reach the tasks**. Everything survived a restart, and the values were saved in `configs/lab-05.env` for Lab 06.
 
 ### 7.2 Observations
 
-- **The service owns the target group, not me.** It is tempting to fill an empty target group with `register-targets`, but ECS would remove those targets again. The service's job is to register every task it starts and deregister every task it stops.
-- **`--target-type ip` is not a preference.** Fargate tasks have no instance ID, so `instance` would be accepted at creation and only fail when attaching the service.
-- **Two health checks can disagree.** ECS checks the container from inside; the ALB checks it over the network. "ECS healthy + target unhealthy" means the app is fine but the network path (usually a security group) is broken.
-- **"Success" does not mean it happened.** Two calls in this lab returned success but did not change anything (`update-service` and revoke-by-rule-ID). Only reading the resource back showed the truth.
-- **Build the new path before removing the old one.** Steps 9, 12 and 13 work like a migration: add the new path, prove it, and only then remove the old one.
+- **The ECS service adds and removes the targets, not me.** I never need `register-targets`.
+- **Fargate needs `--target-type ip`**, because its tasks have no instance ID.
+- **A success message is not proof.** Two commands said success but did nothing. Only reading back showed the truth.
+- **Build the new path first, then remove the old one.** That way the change causes no downtime.
 
 ## 8. Reflection
 
 ### What I learned about load balancers
 
-Before this lab I thought a load balancer was just one thing that "shares traffic". After building it piece by piece, I understand that it is actually four separate objects: the load balancer, the listener, the rules and the target group. I was surprised that the health check belongs to the target group and not to the load balancer itself. It made sense once I saw that one load balancer can have many target groups, and each one needs its own health check.
+Before this lab, I thought a load balancer was just one thing that splits traffic between servers. When I built it myself, one piece at a time, I saw it is actually four pieces. The **load balancer** is the front door with one fixed name. The **listener** waits on a port, port 80 in my case. The **rules** decide where each request should go. The **target group** is the list of tasks that do the real work. Once I saw it like this, it was much easier to follow what happens to a request.
 
-The idea that clicked most for me was that **the ECS service fills the target group**. In Lab 04 I learned that task IPs change all the time. Now I see why that is not a problem: whenever a task starts or stops, the service updates the target group, and the ALB name in front never changes. This is also why Lab 06's auto scaling only has to change one number.
-
-I also understand the security side better now. In Lab 04 the web server could talk to the tasks directly. After the cutover, the only door into the tasks is the load balancer's security group. Seeing `usms-app-sg` disappear from the rule made it clear to me what "one group per tier, each trusting only the tier above" means.
+The part that surprised me was that the health check sits on the target group, not on the load balancer. At first I didn't understand why. Then I thought about it: one load balancer can send traffic to many different target groups, like `/enrolment` to one service and `/results` to another, and each service has to be checked in its own way. So it makes sense for each target group to check its own tasks.
 
 ### Challenges I faced
 
-The hardest part was that Floci said "yes" to things it did not actually do. In Step 10, `update-service` worked with no error, but `LB` was `null`. At first I thought I had written the template wrong, so I checked the file line by line before I found that this is a known Floci issue. It was a bit frustrating, because Steps 11 and 14 depended on it and I could not see any targets or draining.
+My biggest problem was that Floci sometimes said a command worked when it really didn't. In Step 10, I connected the ECS service to the target group and got no error. But when I checked the service, the load balancer setting was `null`. I thought I had typed something wrong, so I went through my JSON file line by line and checked the container name, the port and the ARN. Everything was correct. Then I found on the Known Issues page that this is a bug in Floci 2.0.1. 
 
 ## 9. Conclusion
 
