@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # Verify every Lab 04 artefact exists and is configured correctly.
 # Exit 1 if anything is missing. Read-only; safe to run at any time.
+# Expected result: PASS=39 FAIL=0 (38 Lab 04 checks + 1 added in Lab 05 Exercise 2).
+# Lab 05 Step 13 moved the tasks' only source from usms-app-sg to usms-alb-sg;
+# the networking checks assert that property, not the Lab 04 value.
 set -uo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -10,8 +13,11 @@ source "$REPO_ROOT/configs/lab-01.env" 2>/dev/null || true
 source "$REPO_ROOT/configs/lab-02.env" 2>/dev/null || true
 source "$REPO_ROOT/configs/lab-03.env" 2>/dev/null || true
 source "$REPO_ROOT/configs/lab-04.env" 2>/dev/null || true
+# Optional: only exists after Lab 05. Without it the usms-alb-sg check fails readably (none).
+source "$REPO_ROOT/configs/lab-05.env" 2>/dev/null || true
 
 : "${USMS_APP_SG:=none}"
+: "${USMS_ALB_SG:=none}"
 : "${USMS_PRIVATE_SUBNET_A:=none}"
 : "${USMS_PRIVATE_SUBNET_B:=none}"
 : "${USMS_ECS_CLUSTER:=usms-ecs-cluster}"
@@ -28,6 +34,11 @@ check() {
   if eval "$2" >/dev/null 2>&1; then printf "  ok   %s\n" "$1"; PASS=$((PASS+1))
   else printf "  FAIL %s\n" "$1"; FAIL=$((FAIL+1)); fi
 }
+
+# enrolment_sources -> every source group on usms-enrolment-sg, sorted, one line
+enrolment_sources() { aws ec2 describe-security-groups --group-ids "$USMS_ENROLMENT_SG" \
+          --query 'SecurityGroups[0].IpPermissions[].UserIdGroupPairs[].GroupId' --output text \
+          | tr '\t' '\n' | sed '/^$/d' | sort -u | paste -sd' ' -; }
 
 # svc <jmespath>  -> one field from the ECS service
 svc() { aws ecs describe-services --cluster "$USMS_ECS_CLUSTER" \
@@ -93,8 +104,14 @@ check "service desiredCount is 2 (one task per Availability Zone)" \
 
 echo "== Lab 04 networking =="
 check "usms-enrolment-sg exists"  "aws ec2 describe-security-groups --group-ids $USMS_ENROLMENT_SG"
-check "usms-enrolment-sg is sourced from usms-app-sg (not a CIDR)" \
-  "test \"\$(aws ec2 describe-security-groups --group-ids $USMS_ENROLMENT_SG --query 'SecurityGroups[0].IpPermissions[0].UserIdGroupPairs[0].GroupId' --output text)\" = $USMS_APP_SG"
+# Property: the tasks accept traffic only from ONE named security group, never from a CIDR.
+# Lab 04 named usms-app-sg; since the Lab 05 cutover the named group is usms-alb-sg.
+# Reads every source (not just [0]) so a leftover second rule cannot hide behind the first.
+check "usms-enrolment-sg is sourced ONLY from usms-alb-sg (a group, not a CIDR)" \
+  "test \"\$(enrolment_sources)\" = \"$USMS_ALB_SG\" && ! aws ec2 describe-security-groups --group-ids $USMS_ENROLMENT_SG --query 'SecurityGroups[0].IpPermissions[].IpRanges[].CidrIp' --output text | grep -q '[0-9]'"
+# The new-state check alone would still pass if the old rule had never been revoked.
+check "usms-app-sg is NO LONGER a source on usms-enrolment-sg" \
+  "! enrolment_sources | grep -qw -- $USMS_APP_SG"
 check "usms-enrolment-sg admits NOTHING from 0.0.0.0/0" \
   "! aws ec2 describe-security-groups --group-ids $USMS_ENROLMENT_SG --query 'SecurityGroups[0].IpPermissions[].IpRanges[].CidrIp' --output text | grep -q '0.0.0.0/0'"
 
