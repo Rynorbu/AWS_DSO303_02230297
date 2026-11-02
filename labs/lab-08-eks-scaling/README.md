@@ -569,19 +569,6 @@ The most surprising thing was how much depends on the **CPU request**. The same 
 
 On the exposure side, I learned that each rung keeps the one below: the LoadBalancer Service still has a nodePort and a ClusterIP, and the Ingress points at ordinary ClusterIP Services. The Ingress was the most useful rung. One file gave me the same path routing that took many `elbv2` commands in Lab 05.
 
-### Challenges I faced
-
-I had several problems with the **shell**, not with Kubernetes:
-
-- The `manifests/lab-08/` folder did not exist, so the HPA heredoc failed. I learned to always run `mkdir -p` first.
-- When I opened a new terminal, `USMS_EKS_CLUSTER` and `USMS_EKS_NODEGROUP` were **empty**. The error "No cluster found for name: node-groups" was confusing until I understood that the empty variable made the path `/clusters//node-groups/...`.
-- I typed placeholders like `<cluster-name>` literally, and bash gave "syntax error near unexpected token `newline'", because `<` is a redirect in bash.
-- Pasting the long verify script changed one line and gave a syntax error. Copying a checked file and running `bash -n` first fixed it.
-- At one point my terminal **stopped showing any output**, even for `echo hello`. stdout had been broken by an earlier command. `exec 1>&2` fixed it.
-- `git add` failed because one file in the list did not exist yet, so nothing was staged. I learned to read the output of `git add` before committing.
-
-I also learned that when the emulator does not support an operation (`UpdateNodegroupConfig`), the right thing is to record the error honestly and explain what would happen on real AWS, not to pretend it worked.
-
 ## 9. Conclusion
 
 In this lab I took the three USMS microservices from Lab 07 and made them scalable and reachable. I scaled `usms-enrolment` by hand and by manifest, saw configuration drift, and created the HPA `usms-enrolment-hpa` (2–8 pods, 50% of the 50m CPU request, fast scale-up and a 300-second scale-down window). Under load from `usms-loadgen`, the HPA scaled the Deployment from 2 to 3 by itself, and went back to 2 when the load stopped. I learned that the CPU request controls scheduling, QoS and autoscaling at the same time.
