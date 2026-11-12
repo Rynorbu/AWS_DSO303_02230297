@@ -33,3 +33,4 @@ Thumbs.db
 aws/
 awscliv2.zip
 outputs/*
+labs/lab-11-cicd/app/dist/
