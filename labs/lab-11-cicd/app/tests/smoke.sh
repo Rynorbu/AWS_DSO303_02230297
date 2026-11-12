@@ -18,5 +18,7 @@ t "health endpoint says ok"             "grep -q '^ok$' dist/healthz.html"
 t "build metadata is valid JSON"        "python3 -m json.tool dist/build-metadata.json"
 t "container name matches the task def" "grep -q '\"container\": \"enrolment-api\"' config/service.json"
 
+t "imagedefinitions.json is a one-entry array" "python3 -c 'import json; d = json.load(open(\"dist/imagedefinitions.json\")); c = json.load(open(\"config/service.json\"))[\"container\"]; assert isinstance(d, list) and len(d) == 1 and d[0][\"name\"] == c and d[0][\"imageUri\"]'"
+
 echo "smoke tests failed: $FAIL"
 [ "$FAIL" -eq 0 ]

@@ -19,10 +19,10 @@ phases:
       - test -f VERSION || { echo "VERSION file is missing"; exit 1; }
       - python3 -m json.tool config/service.json > /dev/null
       - |
-        grep -q '"container": "enrolment-api"' config/service.json || {
-          echo "config/service.json names the wrong container"
-          exit 1
-        }
+        python3 -c 'import json, sys
+        want = "enrolment-api"
+        got = json.load(open("config/service.json")).get("container")
+        sys.exit(0 if got == want else "config/service.json names the wrong container: expected %s, actual %s" % (want, got))'
       - |
         grep -q '"port": 80,' config/service.json || {
           echo "config/service.json must set \"port\": 80 (the container listens on 80) - fix the port value and re-run"
@@ -52,13 +52,26 @@ phases:
         }
         META
       - cp config/service.json "$ARTIFACT_DIR/service.json"
+      - IMAGE_URI="${IMAGE_URI:-public.ecr.aws/nginx/nginx:stable-alpine}"
+      - |
+        python3 -c 'import json, sys; c = json.load(open("config/service.json"))["container"]; json.dump([{"name": c, "imageUri": sys.argv[2]}], open(sys.argv[1], "w"))' "$ARTIFACT_DIR/imagedefinitions.json" "$IMAGE_URI"
+      - cat "$ARTIFACT_DIR/imagedefinitions.json"
 
   post_build:
     commands:
       - echo "--- post_build ---"
-      - bash tests/smoke.sh
+      - bash tests/smoke.sh && SMOKE_RC=0 || SMOKE_RC=$?
+      - echo "$SMOKE_RC" > "${TMPDIR:-/tmp}/usms-smoke-rc"
       - ls -l "$ARTIFACT_DIR"
       - cat "$ARTIFACT_DIR/build-metadata.json"
+      - test "$SMOKE_RC" -eq 0
+    finally:
+      - |
+        SMOKE_RC="$(cat "${TMPDIR:-/tmp}/usms-smoke-rc" 2>/dev/null || echo not-run)"
+        if [ "$SMOKE_RC" = "0" ]; then RESULT=PASSED; else RESULT=FAILED; fi
+        mkdir -p "$ARTIFACT_DIR"
+        echo "release=$(tr -d '[:space:]' < VERSION) tests=$RESULT smoke_exit=$SMOKE_RC at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$ARTIFACT_DIR/build-summary.txt"
+        cat "$ARTIFACT_DIR/build-summary.txt"
 
 artifacts:
   base-directory: dist
