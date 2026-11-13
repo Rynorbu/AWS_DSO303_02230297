@@ -61,18 +61,6 @@ The most important limitation: **Floci accepts CodeBuild and CodePipeline, but i
 4. **Permissions:** CodePipeline acts as **`usms-codepipeline-role`** (policy `USMSCodePipelineBase`), and CodeBuild acts as **`usms-codebuild-role`** (policy `USMSCodeBuildBase`).
 5. **On Floci:** stage 1 succeeds, and stage 2 fails because the build image cannot be pulled. The **local runner** `usms-buildspec-run.sh` runs the same four phases on my machine and produces the same `dist/` artifact.
 
-```
-labs/lab-11-cicd/app ──pack──▶ s3://usms-pipeline-artifacts/source/usms-enrolment-src.zip (versioned)
-                                         │
-                     usms-enrolment-pipeline (role: usms-codepipeline-role)
-                                         │
-             ┌───────────────────────────┴───────────────────────────┐
-     Stage 1: Source / FetchSource (S3)        Stage 2: Build / BuildArtifact (CodeBuild)
-             └──▶ SourceOutput ──────────────────▶ usms-enrolment-build (role: usms-codebuild-role)
-                                                   install → pre_build → build → post_build
-                                                                     └──▶ BuildOutput (dist/)
-```
-
 | Resource | Name | Key settings |
 |---|---|---|
 | S3 bucket | `usms-pipeline-artifacts` | Versioning **Enabled**, public access blocked, tags `Project=USMS`, `Tier=pipeline`, `Lab=11` |
