@@ -231,7 +231,9 @@ I waited with `aws ecs wait services-stable`, and it printed `service stable`.
 
 This exercise changes the service to `--desired-count 3` with `aws ecs update-service`, waits for it to settle, and then sets it back to `2`. This is **manual scaling**: only `desiredCount` changes, and the task definition stays the same. Lab 06 will do exactly the same thing automatically.
 
-<!-- Add a screenshot of update-service --desired-count 3 and back to 2 here -->
+![Scaled to 3](assets/step-11.png)
+
+![Back to 2](assets/step-11.1.png)
 
 ### Step 12: Write configs/lab-04.env
 
