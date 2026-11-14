@@ -16,13 +16,15 @@ cd "$REPO_ROOT"
 source "$REPO_ROOT/configs/course.env" 2>/dev/null || true
 
 INVENTORY="${1:-outputs/lab-09-identity-inventory.json}"
+# Accepted findings: committed, reviewed, one reason + control per entry.
+ACCEPTED="${USMS_ACCEPTED_FINDINGS:-policies/usms-accepted-findings.json}"
 
 if [ ! -f "$INVENTORY" ]; then
   echo "no inventory at $INVENTORY - run Lab 09 Step 4 part 2 first" >&2
   exit 2
 fi
 
-python3 - "$INVENTORY" << 'PY'
+python3 - "$INVENTORY" "$ACCEPTED" << 'PY'
 import json, sys
 
 MUTATING = ("Create", "Delete", "Put", "Update", "Modify", "Attach", "Detach",
@@ -50,7 +52,23 @@ def is_mutating(action):
     return any(verb.startswith(p) for p in MUTATING)
 
 roles = json.load(open(sys.argv[1]))
-high = med = 0
+high = med = accepted_n = 0
+
+import os
+accepted = []
+if os.path.exists(sys.argv[2]):
+    for a in json.load(open(sys.argv[2])):
+        if not a.get("reason") or not a.get("control"):
+            print(f"IGNORED accepted entry for {a.get('role')}: no reason/control",
+                  file=sys.stderr)
+            continue
+        accepted.append(a)
+
+def accepted_for(role, text):
+    for a in accepted:
+        if a.get("role") == role and a.get("match", "\0") in text:
+            return a
+    return None
 lines = []
 
 for r in roles:
@@ -113,6 +131,13 @@ for r in roles:
             if (sev, text) in seen:
                 continue
             seen.add((sev, text))
+            acc = accepted_for(name, text)
+            if acc:
+                lines.append(f"    ACCEPTED ({sev}) {text}")
+                lines.append(f"        reason : {acc['reason']}")
+                lines.append(f"        control: {acc['control']}")
+                accepted_n += 1
+                continue
             lines.append(f"    {sev:<4} {text}")
             if sev == "HIGH":
                 high += 1
@@ -123,6 +148,6 @@ for r in roles:
 print("== USMS IAM audit ==")
 print()
 print("\n".join(lines))
-print(f"HIGH={high}  MED={med}  roles={len(roles)}")
+print(f"HIGH={high}  MED={med}  ACCEPTED={accepted_n}  roles={len(roles)}")
 sys.exit(1 if high else 0)
 PY

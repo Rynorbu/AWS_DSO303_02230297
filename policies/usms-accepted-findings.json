@@ -1,0 +1,10 @@
+[
+  {
+    "role": "usms-ec2-app-role",
+    "match": "service principal ec2.amazonaws.com with NO Condition",
+    "reason": "EC2 does not support aws:SourceArn/aws:SourceAccount when it assumes an instance-profile role, so the confused-deputy condition cannot be written. Credentials reach the instance only through the metadata service.",
+    "control": "IMDSv2 required with hop limit 1 on usms-web-01 (Step 11); USMSDeployBase denies iam:PassRole to ec2.amazonaws.com; role used only via usms-ec2-app-profile.",
+    "decidedBy": "<your-name>",
+    "reviewBy": "2027-05-14"
+  }
+]
