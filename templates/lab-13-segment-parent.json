@@ -1,0 +1,22 @@
+{
+  "name": "usms-transcript-notifier",
+  "id": "6feaa7396d9c75a8",
+  "trace_id": "1-6af9cd87-5be76c478778836d16d057d1",
+  "start_time": 1794755975.145,
+  "end_time": 1794755975.265,
+  "origin": "AWS::Lambda::Function",
+  "annotations": {
+    "faculty": "science",
+    "stage": "notify",
+    "transcript_bytes": 2184,
+    "readable": true
+  },
+  "metadata": {
+    "usms": {
+      "key": "transcripts/science/stu-00417.json",
+      "bucket": "usms-student-data",
+      "alias": "live",
+      "handler": "notifier.handler"
+    }
+  }
+}
