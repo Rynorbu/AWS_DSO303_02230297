@@ -14,6 +14,7 @@ source "$REPO_ROOT/configs/lab-10.env" 2>/dev/null || true
 
 BUCKET="${USMS_BUCKET_NAME:-usms-student-data}"
 ROLE_NAME="${USMS_ROLE_LAMBDA:-usms-lambda-exec-role}"
+ROLE_NAME="${ROLE_NAME##*/}"   # lab-01.env stores the ARN; --role-name needs the plain name
 VIEWER=usms-edge-viewer-request
 ORIGIN=usms-edge-origin-response
 NOTIFIER=usms-transcript-notifier

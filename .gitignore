@@ -35,3 +35,5 @@ awscliv2.zip
 outputs/*
 labs/lab-11-cicd/app/dist/
 labs/lab-11-cicd/app-results/dist/
+__pycache__/
+*.pyc
