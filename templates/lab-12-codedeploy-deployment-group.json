@@ -18,7 +18,10 @@
   },
   "autoRollbackConfiguration": {
     "enabled": true,
-    "events": ["DEPLOYMENT_FAILURE", "DEPLOYMENT_STOP_ON_ALARM"]
+    "events": [
+      "DEPLOYMENT_FAILURE",
+      "DEPLOYMENT_STOP_ON_ALARM"
+    ]
   },
   "ecsServices": [
     {
@@ -30,14 +33,22 @@
     "targetGroupPairInfoList": [
       {
         "targetGroups": [
-          { "name": "usms-enrolment-tg" },
-          { "name": "usms-enrolment-tg-green" }
+          {
+            "name": "usms-enrolment-tg"
+          },
+          {
+            "name": "usms-enrolment-tg-green"
+          }
         ],
         "prodTrafficRoute": {
-          "listenerArns": ["<PROD_LISTENER_ARN>"]
+          "listenerArns": [
+            "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/usms-enrolment-alb/9fa3143237114942/e79ffd9f37b54d28"
+          ]
         },
         "testTrafficRoute": {
-          "listenerArns": ["<TEST_LISTENER_ARN>"]
+          "listenerArns": [
+            "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/usms-enrolment-alb/9fa3143237114942/e6327536b7694bee"
+          ]
         }
       }
     ]

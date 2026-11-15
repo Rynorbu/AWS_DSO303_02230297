@@ -242,16 +242,7 @@ The value is written as a **JSON array** (`[{...}]`), even with one entry, becau
 [{"name": "enrolment-api", "imageUri": "public.ecr.aws/nginx/nginx:stable-alpine"}]
 ```
 
-I recorded this in **`outputs/lab-11-lab08b-readiness.txt`** for Lab 12 Step 1:
-
-```
-PIPELINE_ARTIFACT_KEY=not-created
-LOCAL_ARTIFACT=outputs/lab-11-buildoutput.zip
-PIPELINE_EXECUTION=b04d762b-22b7-470a-9e2c-63f7b0030381
-SUPPORT_PATH=B (CodeBuild image cannot be pulled on Floci; artifact built with usms-buildspec-run.sh)
-CONTAINER_NAME=enrolment-api
-IMAGEDEFINITIONS=[{"name": "enrolment-api", "imageUri": "public.ecr.aws/nginx/nginx:stable-alpine"}]
-```
+I recorded this in **`outputs/lab-11-lab08b-readiness.txt`** for Lab 12 Step 1.
 
 `PIPELINE_ARTIFACT_KEY=not-created` is the honest value: the pipeline never produced a `BuildOutput` object on Floci, so Lab 12 should use the local artifact.
 
