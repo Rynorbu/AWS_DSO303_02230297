@@ -47,6 +47,8 @@ To reach a service from outside the cluster there is a ladder of four options. E
 
 ## 4. System Architecture / Design
 
+![alt text](assets/arch.png)
+
 **How it works in simple words:**
 
 1. **metrics-server** reads CPU and memory from the kubelet on each node, and publishes them through the **metrics API** (`metrics.k8s.io`).

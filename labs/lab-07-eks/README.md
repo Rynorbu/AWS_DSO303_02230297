@@ -61,6 +61,8 @@ With Kubernetes:
 
 ## 4. System Architecture / Design
 
+![alt text](assets/arch.png)
+
 **How it works in simple words:**
 
 1. The **AWS CLI** talks to Floci on port **4566** and creates the AWS objects: roles, security group, cluster and node group.

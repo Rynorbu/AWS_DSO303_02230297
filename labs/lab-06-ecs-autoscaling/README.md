@@ -46,6 +46,8 @@ There are three kinds of scaling I used:
 
 ## 4. System Architecture / Design
 
+![alt text](assets/arch.png)
+
 **How it works in simple words:**
 
 1. The service sends **CPU** to CloudWatch (namespace `AWS/ECS`), the load balancer sends **request count** (`AWS/ApplicationELB`), and I send **queue depth** myself (`USMS/Enrolment`).
